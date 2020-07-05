@@ -1,4 +1,4 @@
-package com.sleepy.algorithm.thread.interview.ebay;
+package com.sleepy.algorithm.thread;
 
 import java.util.concurrent.*;
 
