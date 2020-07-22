@@ -10,7 +10,84 @@ import java.util.*;
  **/
 public class PointToOffer {
     public static void main(String[] args) {
-        test07();
+        test18();
+    }
+
+    /**
+     * 剑指 Offer 18. 删除链表的节点
+     * <p>
+     * 给定单向链表的头指针和一个要删除的节点的值，定义一个函数删除该节点。
+     * 返回删除后的链表的头节点。
+     * 注意：此题对比原题有改动
+     * <p>
+     * 示例 1:
+     * 输入: head = [4,5,1,9], val = 5
+     * 输出: [4,1,9]
+     * 解释: 给定你链表中值为 5 的第二个节点，那么在调用了你的函数之后，该链表应变为 4 -> 1 -> 9.
+     * <p>
+     * 示例 2:
+     * 输入: head = [4,5,1,9], val = 1
+     * 输出: [4,5,9]
+     * 解释: 给定你链表中值为 1 的第三个节点，那么在调用了你的函数之后，该链表应变为 4 -> 5 -> 9.
+     * <p>
+     * 说明：
+     * 题目保证链表中节点的值互不相同
+     * 若使用 C 或 C++ 语言，你不需要 free 或 delete 被删除的节点
+     */
+    private static void test18() {
+        ListNode head = new ListNode(new ListNode(new ListNode(new ListNode(new ListNode(41), 9), 1), 5), 4);
+        head = deleteNode(head, 4);
+        while (head != null) {
+            System.out.println(head.val);
+            head = head.next;
+        }
+    }
+
+    private static ListNode deleteNode(ListNode head, int val) {
+        ListNode pre = head;
+        ListNode next = head;
+        while (next != null) {
+            if (val == next.val) {
+                if (head == next) {
+                    head = next.next;
+                }
+                pre.next = next.next;
+            }
+            pre = next;
+            next = next.next;
+        }
+        return head;
+    }
+
+    /**
+     * 剑指 Offer 09. 用两个栈实现队列
+     * <p>
+     * 用两个栈实现一个队列。队列的声明如下，请实现它的两个函数 appendTail 和 deleteHead ，分别完成在队列尾部插入整数和在队列头部删除整数的功能。(若队列中没有元素，deleteHead 操作返回 -1 )
+     * <p>
+     * 例 1：
+     * 输入：
+     * ["CQueue","appendTail","deleteHead","deleteHead"]
+     * [[],[3],[],[]]
+     * 输出：[null,null,3,-1]
+     * <p>
+     * 示例 2：
+     * 输入：
+     * ["CQueue","deleteHead","appendTail","appendTail","deleteHead","deleteHead"]
+     * [[],[],[5],[2],[],[]]
+     * 输出：[null,-1,null,null,5,2]
+     * <p>
+     * 提示：
+     * 1 <= values <= 10000
+     * 最多会对 appendTail、deleteHead 进行 10000 次调用
+     */
+    private static void test09() {
+        CQueue obj = new CQueue();
+        obj.appendTail(12);
+        obj.appendTail(45);
+        obj.appendTail(23);
+        System.out.println(obj.deleteHead());
+        System.out.println(obj.deleteHead());
+        System.out.println(obj.deleteHead());
     }
 
     /**
@@ -20,19 +97,34 @@ public class PointToOffer {
      * 前序遍历 preorder = [3,9,20,15,7]
      * 中序遍历 inorder = [9,3,15,20,7]
      * 返回如下的二叉树：
-     * 3
-     * / \
-     * 9  20
-     * /  \
-     * 15   7
+     * <p>
+     * #            3
+     * #           / \
+     * #          9  20
+     * #            /  \
+     * #           15   7
      *  
      * 限制：
      * 0 <= 节点个数 <= 5000
      */
     private static void test07() {
+        TreeNode tree = buildTree(new int[]{1, 2}, new int[]{1, 2});
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(tree);
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            if (node.left != null) {
+                queue.offer(node.left);
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            }
+            System.out.println(node.val);
+        }
     }
 
-    public TreeNode buildTree(int[] preorder, int[] inorder) {
+    public static TreeNode buildTree(int[] preorder, int[] inorder) {
         if (preorder == null || preorder.length == 0) {
             return null;
         }
@@ -45,18 +137,62 @@ public class PointToOffer {
         return root;
     }
 
-    public TreeNode buildTree(int preRootIndex, int inorderStart, int inorderEnd, Map<Integer, Integer> indexMap, int[] preorder) {
+    public static TreeNode buildTree(int preRootIndex, int inorderStart, int inorderEnd, Map<Integer, Integer> indexMap, int[] preorder) {
         if (inorderStart > inorderEnd) {
             return null;
         }
         TreeNode root = new TreeNode(preorder[preRootIndex]);
-
-        root.left = buildTree(preRootIndex + 1, inorderStart + 1, indexMap.get(preRootIndex) - 1, indexMap, preorder);
-//        root.right = buildTree(preRootIndex + (indexMap.get(preRootIndex) -0));
+        int inRootIndex = indexMap.get(preorder[preRootIndex]);
+        if (preRootIndex + 1 < preorder.length) {
+            root.left = buildTree(preRootIndex + 1, inorderStart, inRootIndex - 1, indexMap, preorder);
+        }
+        if (preRootIndex + (inRootIndex - inorderStart) + 1 < preorder.length) {
+            root.right = buildTree(preRootIndex + (inRootIndex - inorderStart) + 1, inRootIndex + 1, inorderEnd, indexMap, preorder);
+        }
         return root;
     }
 
-    public class TreeNode {
+    public static class ListNode {
+        int val;
+        ListNode next;
+
+        public ListNode(int x) {
+            val = x;
+        }
+
+        public ListNode(ListNode next, int val) {
+            this.val = val;
+            this.next = next;
+        }
+    }
+
+    static class CQueue {
+        Stack<Integer> s1, s2;
+
+        public CQueue() {
+            s1 = new Stack<>();
+            s2 = new Stack<>();
+        }
+
+        public void appendTail(int value) {
+            s1.push(value);
+        }
+
+        public int deleteHead() {
+            if (s2.empty()) {
+                while (!s1.empty()) {
+                    s2.push(s1.pop());
+                }
+            }
+            if (s2.empty()) {
+                return -1;
+            } else {
+                return s2.pop();
+            }
+        }
+    }
+
+    public static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;
@@ -196,14 +332,5 @@ public class PointToOffer {
             if (!set.add(nums[i])) return nums[i];
         }
         return 0;
-    }
-
-    public static class ListNode {
-        int val;
-        ListNode next;
-
-        ListNode(int x) {
-            val = x;
-        }
     }
 }
